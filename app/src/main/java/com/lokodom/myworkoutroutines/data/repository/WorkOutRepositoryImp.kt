@@ -1,6 +1,7 @@
 package com.lokodom.myworkoutroutines.data.repository
 
 import com.lokodom.myworkoutroutines.data.network.WorkOutApi
+import com.lokodom.myworkoutroutines.domain.model.Exercise
 import com.lokodom.myworkoutroutines.domain.model.FullExerciseInfo
 import javax.inject.Inject
 
@@ -38,4 +39,20 @@ class WorkOutRepositoryImp @Inject constructor(
         return finalList
     }
 
+    override suspend fun getExerciseNames(): List<Exercise> {
+        val results = workOutApi.getExerciseList().results
+        val listSize = results.size
+
+        val finalList = mutableListOf<Exercise>()
+
+        for(i in 0 until listSize){
+            val exercises = results[i].exercises?.filter { it.language == 2 }
+
+            if (exercises != null){
+                val exercise = Exercise(exercises[0].id,exercises[0].name,exercises[0].description,exercises[0].language,)
+                finalList.add(exercise)
+            }
+        }
+        return finalList
+    }
 }

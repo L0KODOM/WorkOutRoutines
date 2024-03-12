@@ -6,8 +6,10 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lokodom.myworkoutroutines.domain.model.FullExerciseInfo
+import com.lokodom.myworkoutroutines.domain.useCases.GetExerciseNames
 import com.lokodom.myworkoutroutines.domain.useCases.GetExercisesUseCase
 import com.lokodom.myworkoutroutines.ui.viewmodel.state.ExerciseListState
+import com.lokodom.myworkoutroutines.ui.viewmodel.state.ExerciseNameListState
 import com.lokodom.myworkoutroutines.ui.viewmodel.state.ExerciseState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +21,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewmodel @Inject constructor(
-    private val getExercises: GetExercisesUseCase
+    private val getExercises: GetExercisesUseCase,
+    private val getExercisesNames: GetExerciseNames
 ) : ViewModel(){
 
     private val _isLoading = MutableStateFlow(false)
@@ -28,6 +31,8 @@ class MainViewmodel @Inject constructor(
     var exerciseState by mutableStateOf(ExerciseState())
 
     var exerciseListState by mutableStateOf(ExerciseListState())
+
+    var exerciseNameListState by mutableStateOf(ExerciseNameListState())
 
     fun getExerciseById (id:Int){
         if (!_isLoading.value){
@@ -47,11 +52,20 @@ class MainViewmodel @Inject constructor(
             }
         }
     }
-    fun getExerciseByMuscle (muscle:Int){
+    fun getExerciseByEquipment (id:Int){
         if (!_isLoading.value){
             viewModelScope.launch(Dispatchers.IO) {
                 _isLoading.value = true
-                exerciseListState = exerciseListState.copy(exerciseList = getExercises.getByMuscle(muscle))
+                exerciseListState = exerciseListState.copy(exerciseList = getExercises.getByEquipment(id))
+                _isLoading.value = false
+            }
+        }
+    }
+    fun getExerciseNames (){
+        if (!_isLoading.value){
+            viewModelScope.launch(Dispatchers.IO) {
+                _isLoading.value = true
+                exerciseNameListState = exerciseNameListState.copy(nameList = getExercisesNames.getExerciseNames())
                 _isLoading.value = false
             }
         }

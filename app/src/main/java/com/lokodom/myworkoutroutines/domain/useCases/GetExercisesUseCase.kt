@@ -34,20 +34,18 @@ class GetExercisesUseCase @Inject constructor(
         return exerciseList
 
     }
-
-    suspend fun getByMuscle(muscle:Int): List<FullExerciseInfo>{
+    suspend fun getByEquipment(id:Int): List<FullExerciseInfo>{
 
         var exerciseList = emptyList<FullExerciseInfo>()
 
         try {
-            val exercisesByCategory = repo.getExerciseList().filter { it.muscles?.get(0)?.id == muscle}
+            val exercisesByCategory = repo.getExerciseList().filter { it.equipment?.get(0)?.id  == id }
             exerciseList = exercisesByCategory
 
         }catch (e:Exception){
-            Log.d("getByMuscle", "${e.message}")
+            Log.d("getByCategory", "${e.message}")
         }
         return exerciseList
 
     }
-
 }
